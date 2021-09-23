@@ -1,13 +1,14 @@
 # MysqlAlarm
 mysql 报警
 ## 使用方法
+
 ```python
 from alarm.alarm import DBUtil
-from handler.dingding import ding
+from handler.dingding.dingding import ding
 import json
 
 if __name__ == '__main__':
-    with open("config.json","r") as f:
+    with open("config.json", "r") as f:
         config = json.load(f)
     user = config.get("user")
     passwd = config.get("passwd")

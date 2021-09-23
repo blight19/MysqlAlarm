@@ -1,5 +1,5 @@
 from alarm.alarm import DBUtil
-from handler.dingding import ding
+from handler.dingding.dingding import ding
 import json
 
 if __name__ == '__main__':
