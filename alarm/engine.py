@@ -48,7 +48,7 @@ class DBUtil:
 
         for slave in self.slaves:
             with Slave(user=self.user, passwd=self.passwd,
-                       host=slave, port=3306,tags=self.tags,
+                       host=slave, port=3306,tags=self.tags,funcs=self.funcs,
                        master_host=self.host, alarm_handler=self.alarm_handler) as slave_client:
 
                 if self.params.get("Slaves") is None:
@@ -72,6 +72,8 @@ class DBUtil:
             self.params.pop("Slaves")
 
         for k, v in self.check_params.items():
+            if k not in self.params:
+                continue
             current_value = self.params.get(k)
             th_value = v.get("value")
             check_type = v.get("type")
