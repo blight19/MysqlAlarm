@@ -8,8 +8,10 @@ import json
 from alarm.engine import DBUtil
 from alarm.get_params import all_funcs
 from handler.dingding.dingding import ding
+from logger.logger import Logger
 
 if __name__ == '__main__':
+    my_logger = Logger(stream=True,file=True).get_logger()
     with open("config.json", "r", encoding="utf-8") as f:
         configs = json.load(f)['databases']
     for config in configs:
@@ -22,7 +24,9 @@ if __name__ == '__main__':
         my_functions = ["disk"]
         my_func_dic = {name: all_funcs.get(name) for name in my_functions}
         with DBUtil(user=user, passwd=passwd, host=host, port=port, slaves=slaves,
-                    alarm_handler=ding, tags=tags,funcs=my_func_dic) as client:
+                    alarm_handler=ding, tags=tags,logger=my_logger,
+                    # funcs=my_func_dic
+                    ) as client:
             client.run()
 
 

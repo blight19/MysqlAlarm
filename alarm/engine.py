@@ -64,6 +64,7 @@ class DBUtil:
 
     def run(self):
         self.get_all_params()
+        self.logger.info(f"{self.host} ALL INFO :{self.params}")
         self.check_threshold()
 
     def check_threshold(self):
@@ -128,5 +129,6 @@ class Slave(DBUtil):
 
     def run(self):
         self.get_all_params()
+        self.logger.info(f"{self.host} ALL INFO :{self.params}")
         self.check_threshold()
         return self.params
