@@ -1,11 +1,12 @@
-import time
-import hmac
-import hashlib
 import base64
-import requests
-import urllib.parse
+import hashlib
+import hmac
 import json
+import time
+import urllib.parse
 from pathlib import Path
+
+import requests
 
 file_path = Path(__file__).parent
 
@@ -20,7 +21,7 @@ secret = conf.get("secret")
 url_prefix = conf.get("url")
 
 
-def ding(host, parameter, current, threshold, th_type):
+def ding(host, parameter, current, threshold, th_type,tag):
     timestamp = str(round(time.time() * 1000))
     secret_enc = secret.encode('utf-8')
     string_to_sign = '{}\n{}'.format(timestamp, secret)
@@ -34,6 +35,7 @@ def ding(host, parameter, current, threshold, th_type):
         "markdown": {
             "title": "报警信息",
             "text": f"#### 报警信息 \n > "
+                    f"##### Tag:{tag}\n >"
                     f"##### Host:{host}\n >"
                     f"##### Param:{parameter}\n >"
                     f"##### Current Value:{current}\n >"
