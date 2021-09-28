@@ -2,9 +2,11 @@ import pymysql
 from alarm.get_params import all_funcs
 from alarm.threshold import SLAVE_CHECK_PARAMS, CHECK_PARAMS
 from logger.logger import default_logger
+import sys
+import traceback
 
 
-class DBUtil:
+class Alarmer:
     def __init__(self, user=None, passwd=None, host=None, port=None, tags=None,
                  slaves=None, alarm_handler=print,
                  funcs=all_funcs, logger=default_logger,
@@ -32,7 +34,6 @@ class DBUtil:
                                      user=self.user, passwd=self.passwd)
         self._cursor = self._conn.cursor()
         self.dict_cursor = self._conn.cursor(pymysql.cursors.DictCursor)
-
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -48,7 +49,7 @@ class DBUtil:
 
         for slave in self.slaves:
             with Slave(user=self.user, passwd=self.passwd,
-                       host=slave, port=3306,tags=self.tags,funcs=self.funcs,
+                       host=slave, port=3306, tags=self.tags, funcs=self.funcs,
                        master_host=self.host, alarm_handler=self.alarm_handler) as slave_client:
 
                 if self.params.get("Slaves") is None:
@@ -57,6 +58,7 @@ class DBUtil:
 
     def get_all_params(self):
         # funcs = filter(lambda m: m.startswith("get_mysql") and callable(getattr(self, m)), dir(self))
+
         for name, func in self.funcs.items():
             self.logger.info(f"{self.host}--{name}--getting")
             func(self)
@@ -66,6 +68,16 @@ class DBUtil:
         self.get_all_params()
         self.logger.info(f"{self.host} ALL INFO :{self.params}")
         self.check_threshold()
+
+    def th_run(self):
+        self.__enter__()
+        try:
+            self.run()
+        except Exception as e:
+            exc_type, exc_value, exc_obj = sys.exc_info()
+            s = traceback.format_tb(exc_obj)
+            self.logger.error(f"{self.host} {s}")
+        self.__exit__(None, None, None)
 
     def check_threshold(self):
         # slave参数检查和报警在子类中单独处理
@@ -97,13 +109,17 @@ class DBUtil:
                 self.logger.error("Check Type Not Exist:", check_type, self.host)
             if alarm_flag != "":
                 self.alarm(self.alarm_handler, k, current_value,
-                           th_value, alarm_flag,self.tags)
+                           th_value, alarm_flag, self.tags)
 
     def alarm(self, handler, key, current, th, th_type, tag):
-        handler(self.host, key, current, th, th_type, tag)
+        if isinstance(handler, list):
+            for h in handler:
+                h(self.host, key, current, th, th_type, tag)
+        else:
+            handler(self.host, key, current, th, th_type, tag)
 
 
-class Slave(DBUtil):
+class Slave(Alarmer):
     def __init__(self, user=None, passwd=None, host=None, port=None,
                  master_host=None, tags=None, alarm_handler=print, funcs=all_funcs, logger=default_logger):
         super(Slave, self).__init__(user=user, passwd=passwd, host=host, port=port, tags=tags,
