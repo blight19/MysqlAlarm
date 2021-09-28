@@ -21,7 +21,7 @@ secret = conf.get("secret")
 url_prefix = conf.get("url")
 
 
-def ding(host, parameter, current, threshold, th_type,tag):
+def ding(host, parameter, current, threshold, th_type, tag="",logger=None):
     timestamp = str(round(time.time() * 1000))
     secret_enc = secret.encode('utf-8')
     string_to_sign = '{}\n{}'.format(timestamp, secret)
@@ -45,13 +45,15 @@ def ding(host, parameter, current, threshold, th_type,tag):
 
         },
         "at": {
-            # "atMobiles": [],
+            "atMobiles": ["18526510319"],
             # "atUserIds": [],
-            "isAtAll": False
+            # "isAtAll": True
         }
     }
 
-    requests.post(url, data=json.dumps(data), headers=headers)
+    res = requests.post(url, data=json.dumps(data), headers=headers)
+    if logger:
+        logger.info(f"{host} {res.json()}")
 
 
 if __name__ == '__main__':
