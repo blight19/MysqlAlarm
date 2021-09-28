@@ -3,7 +3,6 @@
 # author:yanshushuang
 # datetime:2021/9/26
 
-
 def get_mysql_disk(db):
     # 占用空间
     db.dict_cursor.execute(
