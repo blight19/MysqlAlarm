@@ -114,9 +114,9 @@ class Alarmer:
     def alarm(self, handler, key, current, th, th_type, tag):
         if isinstance(handler, list):
             for h in handler:
-                h(self.host, key, current, th, th_type, tag)
+                h(self.host, key, current, th, th_type, tag, self.logger)
         else:
-            handler(self.host, key, current, th, th_type, tag)
+            handler(self.host, key, current, th, th_type, tag, self.logger)
 
 
 class Slave(Alarmer):
