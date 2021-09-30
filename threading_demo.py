@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 from alarm.engine import Alarmer
 from alarm.get_params import all_funcs
 from handler import dingding_handler, mail_handler
-from logger.logger import Logger
+from logger import Logger
 
 if __name__ == '__main__':
     my_logger = Logger(stream=True).get_logger()

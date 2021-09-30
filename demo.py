@@ -1,9 +1,9 @@
 import json
 
-from alarm.engine import Alarmer
-from alarm.get_params import all_funcs
-from handler import dingding_handler, mail_handler
-from logger.logger import Logger
+from alarm import Alarmer
+from alarm import all_funcs
+from handler import dingding_handler, mail_handler, fake_handler
+from logger import Logger
 
 if __name__ == '__main__':
     my_logger = Logger(stream=True, file=True).get_logger()
@@ -18,8 +18,11 @@ if __name__ == '__main__':
         tags = config.get("tags")
         my_functions = ["disk", "thread_connect", "innodb_buffer_hint_precent"]
         my_func_dic = {name: all_funcs.get(name) for name in my_functions}
-        with Alarmer(user=user, passwd=passwd, host=host, port=port, slaves=slaves,
-                     alarm_handler=[mail_handler, dingding_handler], tags=tags, logger=my_logger,
-                     funcs=my_func_dic
-                     ) as client:
-            client.run()
+        try:
+            with Alarmer(user=user, passwd=passwd, host=host, port=port, slaves=slaves,
+                         alarm_handler=[fake_handler], tags=tags, logger=my_logger,
+                         funcs=my_func_dic
+                         ) as client:
+                client.run()
+        except Exception as e:
+            my_logger.error(f"Addr:{host}:{host},User:{user},Password:{passwd},{e}")

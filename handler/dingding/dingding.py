@@ -21,7 +21,7 @@ secret = conf.get("secret")
 url_prefix = conf.get("url")
 
 
-def ding(host, parameter, current, threshold, th_type, tag="",logger=None):
+def ding(host, parameter, current, threshold, th_type, tag="", logger=None):
     timestamp = str(round(time.time() * 1000))
     secret_enc = secret.encode('utf-8')
     string_to_sign = '{}\n{}'.format(timestamp, secret)
@@ -34,14 +34,15 @@ def ding(host, parameter, current, threshold, th_type, tag="",logger=None):
         "msgtype": "markdown",
         "markdown": {
             "title": "报警信息",
-            "text": f"#### 报警信息 \n > "
-                    f"##### Tag:{tag}\n >"
-                    f"##### Host:{host}\n >"
-                    f"##### Param:{parameter}\n >"
-                    f"##### Current Value:{current}\n >"
-                    f"##### Alarm Threshold: {th_type} {threshold}\n >"
-                    f"##### Time: {time.strftime('%m-%d %H:%M:%S')}\n >"
-            # "> ![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png)\n"
+            # "text": f"#### 报警信息 \n > "
+            #         f"##### Tag:{tag}\n >"
+            #         f"##### Host:{host}\n >"
+            #         f"##### Param:{parameter}\n >"
+            #         f"##### Current Value:{current}\n >"
+            #         f"##### Alarm Threshold: {th_type} {threshold}\n >"
+            #         f"##### Time: {time.strftime('%m-%d %H:%M:%S')}\n >"
+
+            "text": f"#### 报警信息 \n - Tag:{tag} \n - Host:{host} \n - Param:{parameter} \n - Current Value:{current} \n - Alarm Threshold: {th_type} {threshold} \n - Time: {time.strftime('%m-%d %H:%M:%S')} "
 
         },
         "at": {
@@ -62,4 +63,4 @@ if __name__ == '__main__':
     current = "58.59"
     threshold = "80"
     th_type = "lt "
-    ding(host, parameter, current, threshold, th_type=th_type)
+    ding(host, parameter, current, threshold, th_type=th_type, tag="test")
