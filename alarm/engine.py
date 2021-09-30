@@ -30,8 +30,11 @@ class Alarmer:
         self.logger = logger
 
     def __enter__(self):
-        self._conn = pymysql.connect(host=self.host, port=self.port,
-                                     user=self.user, passwd=self.passwd)
+        try:
+            self._conn = pymysql.connect(host=self.host, port=self.port,
+                                         user=self.user, passwd=self.passwd)
+        except pymysql.err.OperationalError:
+            self.logger.error("Connect Error:",self.host,self.user)
         self._cursor = self._conn.cursor()
         self.dict_cursor = self._conn.cursor(pymysql.cursors.DictCursor)
         return self
@@ -60,7 +63,7 @@ class Alarmer:
         # funcs = filter(lambda m: m.startswith("get_mysql") and callable(getattr(self, m)), dir(self))
 
         for name, func in self.funcs.items():
-            self.logger.info(f"{self.host}--{name}--getting")
+            self.logger.debug(f"{self.host}--{name}--getting")
             func(self)
         self.get_mysql_slave_status()
 
