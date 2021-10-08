@@ -19,7 +19,7 @@ headers = {
 
 secret = conf.get("secret")
 url_prefix = conf.get("url")
-
+proxies = conf.get("proxies")
 
 def ding(host, parameter, current, threshold, th_type, tag="", logger=None):
     timestamp = str(round(time.time() * 1000))
@@ -42,7 +42,9 @@ def ding(host, parameter, current, threshold, th_type, tag="", logger=None):
             #         f"##### Alarm Threshold: {th_type} {threshold}\n >"
             #         f"##### Time: {time.strftime('%m-%d %H:%M:%S')}\n >"
 
-            "text": f"#### 报警信息 \n - Tag:{tag} \n - Host:{host} \n - Param:{parameter} \n - Current Value:{current} \n - Alarm Threshold: {th_type} {threshold} \n - Time: {time.strftime('%m-%d %H:%M:%S')} "
+            "text": f"#### 报警信息 \n - Tag:{tag} \n - Host:{host} \n - Param:{parameter} \n "
+                    f"- Current Value:{current} \n - Alarm Threshold: {th_type} {threshold} \n "
+                    f"- Time: {time.strftime('%m-%d %H:%M:%S')} "
 
         },
         "at": {
@@ -52,10 +54,9 @@ def ding(host, parameter, current, threshold, th_type, tag="", logger=None):
         }
     }
 
-    res = requests.post(url, data=json.dumps(data), headers=headers)
+    res = requests.post(url, data=json.dumps(data), headers=headers,proxies=proxies)
     if logger:
         logger.info(f"{host} {res.json()}")
-
 
 if __name__ == '__main__':
     host = "1.1.1.1"
