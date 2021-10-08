@@ -115,6 +115,7 @@ class Alarmer:
                            th_value, alarm_flag, self.tags)
 
     def alarm(self, handler, key, current, th, th_type, tag):
+        self.logger.debug(f"{tag}-{self.host}, {key}, {current}, {th}, {th_type}")
         if isinstance(handler, list):
             for h in handler:
                 h(self.host, key, current, th, th_type, tag, self.logger)
