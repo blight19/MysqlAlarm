@@ -7,7 +7,7 @@ import time
 
 
 class Logger:
-    def __init__(self, stream=True, file=False):
+    def __init__(self, stream=False, file=False):
         self.logger = logging.getLogger("Alarm Logger")
         self.formatter = logging.Formatter("%(asctime)s - %(levelname)s: %(message)s")
         self.logger.setLevel(logging.INFO)
@@ -31,4 +31,3 @@ class Logger:
         return self.logger
 
 
-default_logger = Logger().get_logger()
