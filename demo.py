@@ -7,6 +7,7 @@ from logger import Logger
 
 if __name__ == '__main__':
     my_logger = Logger(stream=True, file=True).get_logger()
+
     with open("config.json", "r", encoding="utf-8") as f:
         configs = json.load(f)['databases']
     for config in configs:
@@ -16,7 +17,10 @@ if __name__ == '__main__':
         port = config.get("port")
         slaves = config.get("slaves")
         tags = config.get("tags")
-        my_functions = ["disk", "thread_connect", "innodb_buffer_hint_precent"]
+        my_functions = ["disk", "thread_connect", "innodb_buffer_hint_precent",
+                        "trans_time", "innodb_buffer_pool_wait_free","lock_waits"]
+        # my_functions = ["trans_time","innodb_buffer_pool_wait_free","lock_waits"]
+
         my_func_dic = {name: all_funcs.get(name) for name in my_functions}
         try:
             with Alarmer(user=user, passwd=passwd, host=host, port=port, slaves=slaves,
