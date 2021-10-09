@@ -1,7 +1,7 @@
 import pymysql
 from alarm.get_params import all_funcs
 from alarm.threshold import SLAVE_CHECK_PARAMS, CHECK_PARAMS
-from logger.logger import default_logger
+from logger import default_logger
 import sys
 import traceback
 
@@ -34,7 +34,7 @@ class Alarmer:
             self._conn = pymysql.connect(host=self.host, port=self.port,
                                          user=self.user, passwd=self.passwd)
         except pymysql.err.OperationalError:
-            self.logger.error("Connect Error:",self.host,self.user)
+            self.logger.error("Connect Error:", self.host, self.user)
         self._cursor = self._conn.cursor()
         self.dict_cursor = self._conn.cursor(pymysql.cursors.DictCursor)
         return self
@@ -53,7 +53,7 @@ class Alarmer:
         for slave in self.slaves:
             with Slave(user=self.user, passwd=self.passwd,
                        host=slave, port=3306, tags=self.tags, funcs=self.funcs,
-                       master_host=self.host, alarm_handler=self.alarm_handler) as slave_client:
+                       master_host=self.host, alarm_handler=self.alarm_handler,logger=self.logger) as slave_client:
 
                 if self.params.get("Slaves") is None:
                     self.params.update({"Slaves": []})
@@ -125,7 +125,7 @@ class Alarmer:
 
 class Slave(Alarmer):
     def __init__(self, user=None, passwd=None, host=None, port=None,
-                 master_host=None, tags=None, alarm_handler=print, funcs=all_funcs, logger=default_logger):
+                 master_host=None, tags=None, alarm_handler=print, funcs=all_funcs, logger=None):
         super(Slave, self).__init__(user=user, passwd=passwd, host=host, port=port, tags=tags,
                                     alarm_handler=alarm_handler, funcs=funcs, logger=logger)
         self.master_host = master_host
