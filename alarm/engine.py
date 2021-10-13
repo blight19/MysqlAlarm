@@ -32,9 +32,10 @@ class Alarmer:
     def __enter__(self):
         try:
             self._conn = pymysql.connect(host=self.host, port=self.port,
-                                         user=self.user, passwd=self.passwd)
+                                         user=self.user, passwd=self.passwd,connect_timeout=10)
         except pymysql.err.OperationalError:
             self.logger.error("Connect Error:", self.host, self.user)
+            self.alarm(self.host, "connection", "offline", "online", "eq", self.tags)
         self._cursor = self._conn.cursor()
         self.dict_cursor = self._conn.cursor(pymysql.cursors.DictCursor)
         return self
