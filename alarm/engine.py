@@ -36,6 +36,9 @@ class Alarmer:
         except pymysql.err.OperationalError:
             self.logger.error("Connect Error:", self.host, self.user)
             self.alarm(self.host, "connection", "offline", "online", "eq", self.tags)
+        except Exception as e:
+            self.logger.error("Connect Error:", self.host, self.user,e)
+            self.alarm(self.host, "connection", e, "online", "eq", self.tags)
         self._cursor = self._conn.cursor()
         self.dict_cursor = self._conn.cursor(pymysql.cursors.DictCursor)
         return self
@@ -80,7 +83,7 @@ class Alarmer:
         except Exception as e:
             exc_type, exc_value, exc_obj = sys.exc_info()
             s = traceback.format_tb(exc_obj)
-            self.logger.error(f"{self.host} {s}")
+            self.logger.error(f"{self.host} {s} {e} {exc_type}")
         self.__exit__(None, None, None)
 
     def check_threshold(self):
